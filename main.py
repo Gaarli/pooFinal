@@ -1,3 +1,23 @@
+### BIBLIOTECAS UTILIZADAS: SELENIUM; BEAUTIFULSOUP4; TIME
+### IMPORTANTE: PRECISA BAIXAR CADA BIBLIOTECA UTILIZANDO pip install nomeBiblioteca no terminal
+### ex.: pip install selenium
+
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium import webdriver
+from selenium.webdriver.support.ui import Select
+from selenium.webdriver.common.by import By
+from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import StaleElementReferenceException
+
+from bs4 import BeautifulSoup
+import time
+
+# Abrir o navegador
+navegador = webdriver.Chrome()
+navegador.get("https://uspdigital.usp.br/jupiterweb/jupCarreira.jsp?codmnu=8275")
+
 # Definição das classes Disciplina, Curso e Unidade
 class Disciplina:
     def __init__(self, codigo, nome, creditos_aula, creditos_trabalho,
@@ -76,23 +96,6 @@ class Unidade:
     def __repr__(self):
         return f"Unidade: {self.nome} - {len(self.cursos)} cursos"
 
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-
-from selenium import webdriver
-
-from selenium.webdriver.support.ui import Select
-from selenium.webdriver.common.by import By
-import time # Apenas para demonstração, pode não ser necessário
-
-from bs4 import BeautifulSoup
-
-from selenium.common.exceptions import TimeoutException
-from selenium.common.exceptions import NoSuchElementException
-from selenium.common.exceptions import StaleElementReferenceException
-
-
-import time
 
 driver = webdriver.Chrome()
 driver.get("https://uspdigital.usp.br/jupiterweb/jupCarreira.jsp?codmnu=8275")
@@ -108,7 +111,6 @@ def esperar_overlay_sumir(driver, timeout=10):
     except:
         pass  # se não aparecer, segue em frente
 
-import time
 from selenium.common.exceptions import ElementClickInterceptedException
 
 def clicar_quando_nao_interceptado(driver, by, value, timeout=10):
