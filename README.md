@@ -1,4 +1,4 @@
-### ORGANIZAÇÃO DO TRABALHO
+### ORGANIZAÇÃO DO TRABALH
 
 ## Passos:
 
