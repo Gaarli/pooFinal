@@ -12,7 +12,7 @@ def iniciar_driver():
     driver = webdriver.Chrome()
     driver.get("https://uspdigital.usp.br/jupiterweb/jupCarreira.jsp?codmnu=8275")
     wait = WebDriverWait(driver, 10)
-    return driver, wait
+    return driver
 
 def selecionar_unidade(select_unidade, unidade):
     select_unidade.select_by_value(unidade.get_attribute('value'))
@@ -22,10 +22,11 @@ def selecionar_curso(select_curso, curso):
     select_curso.select_by_value(curso.get_attribute('value'))
     time.sleep(0.2)
 
-def clicar_quando_nao_interceptado(driver, by, path):
+def clicar_quando_nao_interceptado(driver, by, value):
     while True:
         try:
-            driver.find_element(by, path).click()
-            break
-        except ElementClickInterceptedException:
+            elemento = driver.find_element(by, value)
+            elemento.click()
+            break  # deu certo, saiu do loop
+        except ElementClickInterceptedException as e:
             time.sleep(0.1)

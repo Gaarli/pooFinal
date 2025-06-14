@@ -10,52 +10,44 @@ from selenium.common.exceptions import ElementClickInterceptedException
 import time
 
 def extrair_dados_do_curso(driver, nome_curso, nome_unidade):
-    try:
-        clicar_quando_nao_interceptado(driver, By.ID, "enviar")
-        WebDriverWait(driver, 3).until(EC.element_to_be_clickable((By.ID, "step4-tab")))
-        driver.find_element(By.ID, "step4-tab").click()
-    except ElementClickInterceptedException:
-        curso = Curso(nome_curso, nome_unidade, 0, 0, 0)
-        clicar_quando_nao_interceptado(driver, By.XPATH, "/html/body/div[7]/div[3]/div/button/span")
-        return False, curso, None
+    time.sleep(0.5)
 
-    time.sleep(0.1)
+    lista_disciplinas=[]
+
     soup = BeautifulSoup(driver.page_source, 'html.parser')
+    
+    duracaoIdeal = soup.find('span', class_='duridlhab').text
+    duracaoMinima = soup.find('span', class_='durminhab').text
+    duracaoMaxima = soup.find('span', class_='durmaxhab').text
 
-    try:
-        duracaoIdeal = soup.find('span', class_='duridlhab').text
-        duracaoMinima = soup.find('span', class_='durminhab').text
-        duracaoMaxima = soup.find('span', class_='durmaxhab').text
-    except Exception:
-        return False, None, (nome_unidade, nome_curso)
-
-    curso = Curso(nome_curso, nome_unidade, duracaoIdeal, duracaoMinima, duracaoMaxima)
+    curso_instancia = Curso(nome_curso, nome_unidade, duracaoIdeal, duracaoMinima, duracaoMaxima)
+    
     tabelas = soup.find('div', id="gradeCurricular").find_all('table')
-
-    if not tabelas:
-        return True, curso, (nome_unidade, nome_curso)
 
     for tabela in tabelas:
         tipo_tabela = tabela.find('td').text
-        disciplinas = tabela.find_all('tr', {'style': 'height: 20px;'})
-
-        tipo = None
-        if tipo_tabela == "Disciplinas Obrigatórias":
-            tipo = "obrigatoria"
-        elif tipo_tabela == "Disciplinas Optativas Eletivas":
-            tipo = "optativa_eletiva"
-        elif tipo_tabela == "Disciplinas Optativas Livres":
-            tipo = "optativa_livre"
-
-        if tipo:
+        disciplinas = tabela.find_all('tr',{'style': 'height: 20px;'})
+        if(tipo_tabela=="Disciplinas Obrigatórias"):
             for disciplina in disciplinas:
                 infos = disciplina.find_all('td')
-                d = Disciplina(*[i.text for i in infos])
-                curso.adicionar_disciplina(d, tipo)
+                disciplina_instancia = Disciplina(infos[0].text,infos[1].text,infos[2].text,infos[3].text,infos[4].text,infos[5].text,infos[6].text,infos[7].text)
+                lista_disciplinas.append((disciplina_instancia,"obrigatoria"))
+            continue
+        if(tipo_tabela=="Disciplinas Optativas Eletivas"):
+            for disciplina in disciplinas:
+                infos = disciplina.find_all('td')
+                disciplina_instancia = Disciplina(infos[0].text,infos[1].text,infos[2].text,infos[3].text,infos[4].text,infos[5].text,infos[6].text,infos[7].text)
+                lista_disciplinas.append((disciplina_instancia,"optativa_eletiva"))
+            continue
+        if(tipo_tabela=="Disciplinas Optativas Livres"):
+            for disciplina in disciplinas:
+                infos = disciplina.find_all('td')
+                disciplina_instancia = Disciplina(infos[0].text,infos[1].text,infos[2].text,infos[3].text,infos[4].text,infos[5].text,infos[6].text,infos[7].text)
+                lista_disciplinas.append((disciplina_instancia,"optativa_livre"))
+            continue
+    
+    for disciplina,tipo in lista_disciplinas:
+        curso_instancia.adicionar_disciplina(disciplina,tipo)
 
-    clicar_quando_nao_interceptado(driver, By.ID, "step1-tab")
-    return True, curso, None
-
-def disciplinas_em_varios_cursos(lista_unidades):
-    # Aqui você pode colocar seu código para análise posterior se quiser
-    pass
+    lista_disciplinas.clear()
+    return curso_instancia
