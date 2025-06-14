@@ -17,11 +17,12 @@ from driver import *
 from classes import Unidade
 from classes import Disciplina
 from classes import Curso
+import sys
 
 # Função principal
 def main():
 
-    quantidade_unidades = int(input())
+    quantidade_unidades = int(sys.argv[1])
 
     lista_unidades = []
     lista_unidades = extrair_todos_dados(quantidade_unidades)
@@ -58,5 +59,6 @@ def main():
         
     quit()
 
-# Chama a função principal
-main()
+if __name__ == "__main__":
+    # Chama a função principal
+    main()

@@ -9,9 +9,12 @@ from selenium.common.exceptions import ElementClickInterceptedException
 import time
 
 def iniciar_driver():
+    max_time = 10
     driver = webdriver.Chrome()
     driver.get("https://uspdigital.usp.br/jupiterweb/jupCarreira.jsp?codmnu=8275")
-    wait = WebDriverWait(driver, 10)
+    WebDriverWait(driver, max_time).until(
+        EC.presence_of_element_located((By.ID, 'comboUnidade'))
+    )
     return driver
 
 def selecionar_unidade(select_unidade, unidade):
