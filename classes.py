@@ -1,3 +1,5 @@
+# O módulo 'classes.py' implementa as classes que representam as disciplinas, cursos e unidades
+
 class Disciplina:
     def __init__(self, codigo, nome, creditos_aula, creditos_trabalho,
                  carga_horaria, carga_estagio, carga_praticas, carga_atividades):
