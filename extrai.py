@@ -9,6 +9,13 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import ElementClickInterceptedException
 import time
 
+# Importa classes
+from classes import Unidade
+from classes import Disciplina
+from classes import Curso
+
+from driver import *
+
 def extrair_dados_do_curso(driver, nome_curso, nome_unidade):
     time.sleep(0.5)
 
@@ -51,3 +58,50 @@ def extrair_dados_do_curso(driver, nome_curso, nome_unidade):
 
     lista_disciplinas.clear()
     return curso_instancia
+
+def extrair_todos_dados(quantidade_unidades):
+    lista_unidades = []
+
+    driver = iniciar_driver()
+
+    select_unidade = Select(driver.find_element(By.ID, "comboUnidade"))
+
+    for unidade in select_unidade.options[1:quantidade_unidades]:
+        selecionar_unidade(select_unidade, unidade)
+        
+        nomeUnidade = unidade.get_attribute('text')
+        unidade_instancia = Unidade(nomeUnidade)
+        
+        print(f"***** UNIDADE SELECIONADA: {nomeUnidade} *****")
+        
+        select_curso = Select(driver.find_element(By.ID, "comboCurso"))
+        
+        for curso in select_curso.options[1:]:
+            selecionar_curso(select_curso, curso)
+            nomeCurso = curso.get_attribute('text')
+            
+            print(f"***** CURSO SELECIONADO: {nomeCurso} *****")
+
+            clicar_quando_nao_interceptado(driver, By.ID, "enviar")
+
+            try:
+                WebDriverWait(driver,3).until(EC.element_to_be_clickable((By.ID,"step4-tab")))
+                driver.find_element(By.ID,"step4-tab").click()
+            except ElementClickInterceptedException as e:
+                curso_instancia = Curso(nomeCurso,nomeUnidade,0,0,0)
+                unidade_instancia.adicionar_curso(curso_instancia)                
+                clicar_quando_nao_interceptado(driver, By.XPATH, "/html/body/div[7]/div[3]/div/button/span")
+                continue
+            
+            curso_instancia = extrair_dados_do_curso(driver,nomeCurso,nomeUnidade)
+            unidade_instancia.adicionar_curso(curso_instancia)
+            
+            print(f"***** DADOS EXTRAIDOS *****")
+            curso_instancia.mostrar()
+
+            clicar_quando_nao_interceptado(driver, By.ID, "step1-tab")
+
+
+        lista_unidades.append(unidade_instancia)
+
+    return lista_unidades

@@ -13,9 +13,6 @@ from selenium.common.exceptions import *
 from extrai import *
 from driver import *
 
-from bs4 import BeautifulSoup
-import time
-
 # Importa classes
 from classes import Unidade
 from classes import Disciplina
@@ -24,42 +21,42 @@ from classes import Curso
 # Função principal
 def main():
 
+    quantidade_unidades = int(input())
+
     lista_unidades = []
+    lista_unidades = extrair_todos_dados(quantidade_unidades)
 
-    driver = iniciar_driver()
+    print("*************** EXTRAÇÃO DOS DADOS FINALIZADA ***************")
+    print()
+    while True:
+        print("******************************")
+        print("DIGITE A CONSULTA DESEJADA")
+        print("******************************")
 
-    select_unidade = Select(driver.find_element(By.ID, "comboUnidade"))
-
-    for unidade in select_unidade.options[1:]:
-        select_unidade.select_by_value(unidade.get_attribute('value'))
-
-        nomeUnidade = unidade.get_attribute('text')
+        print("0 - FINALIZAR CONSULTAS ")
+        print("1 - Lista de cursos por unidade ")
+        print("2 - Dados de um determinado curso ")
+        print("3 - Dados de todos os cursos ")
+        print("4 - Dados de uma disciplina, inclusive quais cursos ela faz parte ")
+        print("5 - Disciplinas que são usadas em mais de um curso ")
         
-        unidade_instancia = Unidade(nomeUnidade)
+        codigo = input()
 
-        select_curso = Select(driver.find_element(By.ID, "comboCurso"))
+        if(codigo == '0'):
+            print("PROGRAMA FINALIZADO")
+            break
+        elif(codigo == '1'):
+            print('codigo 1')
+        elif(codigo == '2'):
+            print('codigo 2')
+        elif(codigo == '3'): 
+            print('codigo 3')
+        elif(codigo == '4'): 
+            print('codigo 4')
+        elif(codigo == '5'): 
+            print('codigo 5')
         
-        for curso in select_curso.options[1:]:
-            select_curso.select_by_value(curso.get_attribute('value'))
-            nomeCurso = curso.get_attribute('text')
-            
-            clicar_quando_nao_interceptado(driver, By.ID, "enviar")
-
-            try:
-                WebDriverWait(driver,3).until(EC.element_to_be_clickable((By.ID,"step4-tab")))
-                driver.find_element(By.ID,"step4-tab").click()
-            except ElementClickInterceptedException as e:
-                curso_instancia = Curso(nomeCurso,nomeUnidade,0,0,0)
-                unidade_instancia.adicionar_curso(curso_instancia)                
-                clicar_quando_nao_interceptado(driver, By.XPATH, "/html/body/div[7]/div[3]/div/button/span")
-                continue
-            
-            curso_instancia = extrair_dados_do_curso(driver,nomeCurso,nomeUnidade)
-            unidade_instancia.adicionar_curso(curso_instancia)
-            
-            clicar_quando_nao_interceptado(driver, By.ID, "step1-tab")
-
-        lista_unidades.append(unidade_instancia)
+    quit()
 
 # Chama a função principal
 main()

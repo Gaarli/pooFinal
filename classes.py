@@ -13,9 +13,7 @@ class Disciplina:
         self.carga_atividades = carga_atividades
 
     def mostrar(self):
-        print(f"  {self.codigo} - {self.nome}")
-        print(f"    Créditos Aula: {self.creditos_aula}")
-        print(f"    Créditos Trabalho: {self.creditos_trabalho}")
+        print(f"  {self.codigo} - {self.nome}, Créditos Aula: {self.creditos_aula}, Créditos Trabalho: {self.creditos_trabalho}")
         print(f"    CH: {self.carga_horaria}, Estágio: {self.carga_estagio}, Práticas: {self.carga_praticas}, Atividades: {self.carga_atividades}")
 
 
@@ -39,8 +37,6 @@ class Curso:
             self.optativas_eletivas.append(disciplina)
 
     def mostrar(self):
-        print(f"Curso: {self.nome}")
-        print(f"  Unidade: {self.unidade}")
         print(f"  Duração Ideal: {self.duracao_ideal} | Mínima: {self.duracao_minima} | Máxima: {self.duracao_maxima}")
         print("\n  Disciplinas Obrigatórias:")
         for d in self.obrigatorias:
