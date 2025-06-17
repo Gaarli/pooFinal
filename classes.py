@@ -18,7 +18,8 @@ class Disciplina:
 
 
 class Curso:
-    def __init__(self, nome, unidade, duracao_ideal, duracao_minima, duracao_maxima):
+    def __init__(self, nome, unidade, duracao_ideal=0, duracao_minima=0, duracao_maxima=0, info_disponivel = True):
+        self.info_disponivel = info_disponivel # indica se as informações do curso foi fornecido (está disponível)
         self.nome = nome
         self.unidade = unidade
         self.duracao_ideal = duracao_ideal
