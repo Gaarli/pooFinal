@@ -123,5 +123,7 @@ def imprimir_sexta_consulta(cursos_filtrados):
 
     # Mostrar os cursos encontrados
     for curso in cursos_filtrados:
-        print("\n---------------------------")
-        curso.mostrar()
+        print(f"•{curso.nome}")
+
+    print('\n')
+        

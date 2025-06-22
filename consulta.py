@@ -34,32 +34,45 @@ def remover_acentos(texto):
 
 # A função a seguir implementa a funcionalidade 2. Dados de um determinado curso
 def buscar_curso_por_nome(lista_unidades, nome_curso_busca):
-    # Inicializa um dicionário para armazenar as unidades que possuem o curso buscado.
-    resultado = {}
-
-    # Normaliza o termo de busca: remove espaços, converte para minúsculas e tira acentos.
+    # Normaliza o termo de busca (minúsculas, sem acentos e espaços extras)
     termo = remover_acentos(nome_curso_busca.strip().lower())
 
-    # Itera sobre cada objeto 'unidade' na lista de unidades.
+    # Acumula cursos encontrados como tuplas (curso, unidade)
+    cursos_encontrados = []
+
     for unidade in lista_unidades:
-        # Cria uma lista vazia para guardar os cursos encontrados na unidade atual.
-        cursos_encontrados = []
-        # Itera sobre cada objeto 'curso' existente na unidade atual.
         for curso in unidade.cursos:
-            # Normaliza o nome do curso para realizar uma comparação padronizada.
             nome_normalizado = remover_acentos(curso.nome.lower())
-            # Verifica se o termo de busca está contido no nome do curso.
             if termo in nome_normalizado:
-                # Se o termo for encontrado, adiciona o objeto 'curso' à lista de encontrados.
-                cursos_encontrados.append(curso)
+                cursos_encontrados.append((curso, unidade))
 
-        # Após verificar todos os cursos da unidade, checa se a lista de encontrados não está vazia.
-        if cursos_encontrados:
-            # Adiciona a unidade e seus cursos encontrados ao dicionário de resultado.
-            resultado[unidade.nome] = cursos_encontrados
+    if not cursos_encontrados:
+        print("Nenhum curso encontrado com esse nome.")
+        return
 
-    # Retorna o dicionário com as unidades e os cursos correspondentes à busca.
-    return resultado
+    # Se houver mais de um curso (ex.: turnos diferentes), peça para escolher
+    if len(cursos_encontrados) > 1:
+        print(f"\nForam encontrados {len(cursos_encontrados)} cursos com esse nome:")
+        for i, (curso, unidade) in enumerate(cursos_encontrados, 1):
+            print(f"{i} - {curso.nome} ({unidade.nome})")
+
+        while True:
+            try:
+                escolha = int(input("Digite o número correspondente ao curso desejado: "))
+                if 1 <= escolha <= len(cursos_encontrados):
+                    curso, unidade = cursos_encontrados[escolha - 1]
+                    print(f"\nCurso selecionado: {curso.nome} ({unidade.nome})\n")
+                    curso.mostrar()
+                    return
+                else:
+                    print("Número fora do intervalo. Tente novamente.")
+            except ValueError:
+                print("Entrada inválida. Digite apenas um número.")
+    else:
+        # Apenas um curso encontrado – mostra diretamente
+        curso, unidade = cursos_encontrados[0]
+        print(f"\nCurso encontrado: {curso.nome} ({unidade.nome})\n")
+        curso.mostrar()
 
 # A função a seguir implementa a funcionalidade 3. Dados de todos os cursos
 def listar_dados_de_todos_os_cursos(lista_de_unidades):

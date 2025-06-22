@@ -1,5 +1,5 @@
 # NOME: Gabriel de Araujo Lima - NUSP: 14571376
-# NOME: 
+# NOME: Beatriz Alves dos Santos - NUSP: 15588630
 
 # BIBLIOTECAS UTILIZADAS: SELENIUM; BEAUTIFULSOUP4
 # IMPORTANTE: PRECISA BAIXAR CADA BIBLIOTECA UTILIZANDO pip install nomeBiblioteca no terminal

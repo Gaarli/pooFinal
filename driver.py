@@ -39,7 +39,8 @@ def clicar_quando_nao_interceptado(driver, by, value):
         try:
             elemento = driver.find_element(by, value)
             elemento.click()
-            break  # deu certo, saiu do loop
+            # deu certo, sai do loop
+            break  
         except ElementClickInterceptedException as e:
             time.sleep(0.1)
     
