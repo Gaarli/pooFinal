@@ -2,30 +2,36 @@
 ### IMPORTANTE: PRECISA BAIXAR CADA BIBLIOTECA UTILIZANDO pip install nomeBiblioteca no terminal
 ### ex.: pip install selenium
 
+'''
+'main.py' é o programa principal, responsável pela interação com o usuário e pela chamada das funções
+que executam as operações busca e de impressão.
+'''
+
 # Importa bibliotecas
 from selenium.common.exceptions import *
 from extrai import *
 from driver import *
+import sys
 
 # Importa classes
 from classes import Unidade
 from classes import Disciplina
 from classes import Curso
-import sys
 
-# Função principal
+# Função principal responsável pela interação com o usuário
 def main():
 
     quantidade_unidades = int(sys.argv[1])
 
     lista_unidades = []
+    # Extrai os dados das unidades
     lista_unidades = extrair_todos_dados(quantidade_unidades)
 
-    print("*************** EXTRAÇÃO DOS DADOS FINALIZADA ***************")
-    print()
+    print("*************** EXTRAÇÃO DOS DADOS FINALIZADA ***************\n")
+
     while True:
         print("******************************")
-        print("DIGITE A CONSULTA DESEJADA")
+        print(" DIGITE A CONSULTA DESEJADA")
         print("******************************")
 
         print("0 - FINALIZAR CONSULTAS ")

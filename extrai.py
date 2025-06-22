@@ -1,7 +1,6 @@
 '''
-extrai.py
-Arquivo com as funções principais e auxiliares relativas à extração de dados do website 
-e à criação e inicialização dos objetos dos tipos Unidade, Curso e Disciplina.
+O módulo 'extrai.py' implementa as funções principais e auxiliares relativas à extração de dados 
+do website e à criação e inicialização dos objetos dos tipos Unidade, Curso e Disciplina.
 '''
 
 # Importação de bibliotecas e funções
@@ -21,10 +20,13 @@ from classes import Curso, Disciplina, Unidade
 # Função para verificar se ocorreu o erro de dados não encontrados
 def erro_dados_nao_encontrados(driver):
     try:
+        # Procura a mensagem de erro e retorna se ela está visível na tela
         caixa = driver.find_element(By.XPATH, "//div[@id='err']//p[contains(text(), 'Dados não encontrados')]")
         return caixa.is_displayed()
     except:
+        # Caso dê algum erro na procura, retorna False
         return False
+
 
 # Função que verifica o tipo de situação na busca das informações do curso (erro ou 
 # grade horária disponível) e retorna uma string descritiva da situação.
@@ -57,18 +59,6 @@ def condicao_erro_ou_aba(driver):
         pass
 
     return False  # Continua esperando
-
-# Função para "pausar" o prosseguimento do código enquanto houver um overlay de carregamento na tela
-def esperar_overlay_sumir(driver, timeout=10):
-    try:
-        WebDriverWait(driver, timeout).until_not(
-            lambda d: any(e.is_displayed() for e in d.find_elements(By.CLASS_NAME, "blockUI"))
-        )
-        time.sleep(0.5)
-        return True
-    except:
-        print("Overlay de carregamento não sumiu a tempo.")
-        return False
 
 # --------------------------- FUNÇÕES PRINCIPAIS --------------------------
 
@@ -123,7 +113,8 @@ def extrair_dados_do_curso(driver, nome_curso, nome_unidade):
     # Retorna a instância atualizada do curso
     return curso_instancia
 
-
+# Função principal que extrai todos os dados de cada unidade e retorna uma lista
+# com todas elas. A quantidade de unidades é dada pelo parâmetro.
 def extrair_todos_dados(quantidade_unidades):
     # Lista para adicionar as unidades
     lista_unidades = []
@@ -179,20 +170,8 @@ def extrair_todos_dados(quantidade_unidades):
                     
                     continue  # Segue para o próximo curso
 
-                # Espera o overlay de carregamento sumir
-                esperar_overlay_sumir(driver)
-
-                try:
-                    # Seleciona a aba da grade curricular
-                    aba = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, "step4-tab")))
-                    aba.click()
-
-                except ElementClickInterceptedException:
-                    print("Clique interceptado mesmo após espera. Tentando novamente após novo delay...")
-                    esperar_overlay_sumir(driver)
-                    time.sleep(0.5)  # Segurança extra
-                    aba = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, "step4-tab")))
-                    aba.click()
+                # Tenta clicar na aba de "Grade Curricular" até o overlay de carregamento sumir
+                clicar_quando_nao_interceptado(driver, By.ID, "step4-tab")
 
                 # Cria uma instância do curso e adiciona-o na instância da unidade
                 curso_instancia = extrair_dados_do_curso(driver,nomeCurso,nomeUnidade)
@@ -202,7 +181,7 @@ def extrair_todos_dados(quantidade_unidades):
                 print(f"***** DADOS EXTRAIDOS *****")
                 curso_instancia.mostrar()
 
-                # Voltar para o menu de escolhas
+                # Voltar para o menu de escolha do curso
                 clicar_quando_nao_interceptado(driver, By.ID, "step1-tab")
 
 
@@ -213,5 +192,5 @@ def extrair_todos_dados(quantidade_unidades):
         print("Erro durante execução:", type(e).__name__, e)
         driver.quit()
 
-    # Retorna a lista com todas as unidades (especificadas)
+    # Retorna a lista com todas as unidades, de acordo com a quantidade especificada
     return lista_unidades
