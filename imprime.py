@@ -24,7 +24,7 @@ def imprimir_primeira_consulta(dicionario):
 # Função para imprimir o dicionario retornado pela consulta 2
 def imprimir_segunda_consulta(dicionario_cursos):
     if not dicionario_cursos or all(len(cursos) == 0 for cursos in dicionario_cursos.values()):
-        print("\nNenhum curso foi encontrado.\n")
+        # print("\nNenhum curso foi encontrado.\n")
         return
         
     print("\n" + "=" * 80)

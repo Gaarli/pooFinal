@@ -47,7 +47,7 @@ def buscar_curso_por_nome(lista_unidades, nome_curso_busca):
                 cursos_encontrados.append((curso, unidade))
 
     if not cursos_encontrados:
-        print("Nenhum curso encontrado com esse nome.")
+        print("\nNenhum curso encontrado com esse nome.")
         return
 
     # Se houver mais de um curso (ex.: turnos diferentes), peça para escolher
@@ -58,16 +58,16 @@ def buscar_curso_por_nome(lista_unidades, nome_curso_busca):
 
         while True:
             try:
-                escolha = int(input("Digite o número correspondente ao curso desejado: "))
+                escolha = int(input("\nDigite o número correspondente ao curso desejado: "))
                 if 1 <= escolha <= len(cursos_encontrados):
                     curso, unidade = cursos_encontrados[escolha - 1]
-                    print(f"\nCurso selecionado: {curso.nome} ({unidade.nome})\n")
+                    print(f"\nCurso selecionado: {curso.nome} ({unidade.nome})")
                     curso.mostrar()
                     return
                 else:
-                    print("Número fora do intervalo. Tente novamente.")
+                    print("\nNúmero fora do intervalo. Tente novamente.")
             except ValueError:
-                print("Entrada inválida. Digite apenas um número.")
+                print("\nEntrada inválida. Digite apenas um número.")
     else:
         # Apenas um curso encontrado – mostra diretamente
         curso, unidade = cursos_encontrados[0]

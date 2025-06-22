@@ -11,6 +11,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import ElementClickInterceptedException
 import time
 from driver import *
+import re
 
 # Importa classes
 from classes import Curso, Disciplina, Unidade
@@ -41,7 +42,15 @@ def extrair_disciplinas(soup):
         for disciplina in disciplinas:
             # Extrai as informações separadas da disciplina, cria um objeto e adiciona-o na lista
             infos = disciplina.find_all('td')
-            disciplina_instancia = Disciplina(infos[0].text,infos[1].text,infos[2].text,infos[3].text,infos[4].text,infos[5].text,infos[6].text,infos[7].text)
+
+            v = []
+            for i in range(8):
+                if infos[i].text == '':
+                    v.append('0')
+                else:
+                    v.append(infos[i].text) 
+            
+            disciplina_instancia = Disciplina(v[0],v[1],v[2],v[3],v[4],v[5],v[6],v[7])
             lista_disciplinas.append((disciplina_instancia, tipo_tabela))
 
     # Retorna a lista com todas as disciplinas
@@ -97,7 +106,8 @@ def extrair_todos_dados(quantidade_unidades):
             nomeUnidade = unidade.get_attribute('text')
             unidade_instancia = Unidade(nomeUnidade)
             
-            print(f"\nUNIDADE SELECIONADA: {nomeUnidade}")
+            # Debug
+            # print(f"\nUNIDADE SELECIONADA: {nomeUnidade}")
             
             # Espera as opções de curso ser clicável
             WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "comboCurso")))
@@ -111,11 +121,9 @@ def extrair_todos_dados(quantidade_unidades):
                 selecionar_curso(select_curso, curso)
                 nomeCurso = curso.get_attribute('text')
                 
-                print(f"\nCURSO SELECIONADO: {nomeCurso}")
 
                 # Tenta buscar as informações do curso, clicando no botão "Buscar"
                 clicar_quando_nao_interceptado(driver, By.ID, "enviar")
-
 
                 # Verifica se houve erro de informações não disponíveis
                 resultado = WebDriverWait(driver, 10).until(condicao_erro_ou_aba)
@@ -138,12 +146,15 @@ def extrair_todos_dados(quantidade_unidades):
                 unidade_instancia.adicionar_curso(curso_instancia)
                 
                 # DEBUG
-                print(f"*** DADOS EXTRAIDOS ***\n")
+                # print(f"*** DADOS EXTRAIDOS ***\n")
                 # curso_instancia.mostrar()
 
                 # Voltar para o menu de escolha do curso
                 clicar_quando_nao_interceptado(driver, By.ID, "step1-tab")
 
+                # Imprime o curso que foi extraído na saída padrão
+                sigla = re.search(r"\(\s*([A-Z]+)\s*\)", nomeUnidade).group(1)
+                print(f"Dados do curso \"{nomeCurso}\" ({sigla}) extraídos")
 
             # Adiciona a unidade atualizada na lista de unidades
             lista_unidades.append(unidade_instancia)

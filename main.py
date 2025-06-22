@@ -21,12 +21,12 @@ def main():
     # Ou seja, o '3', por exemplo, pode ser escrito na frente de main.py
 
     lista_de_unidades = extrair_todos_dados(quantidade_unidades) # Extrai os dados e guarda em lista_unidades
-    print("---------- Extração finalizada ----------")
+    print("\n---------- Extração finalizada ----------")
     
     # Entra no loop das consultas
     while True:
         # Imprime a interface no terminal
-        print("0 - FINALIZAR CONSULTAS ")
+        print("\n0 - FINALIZAR CONSULTAS ")
         print("1 - Lista de cursos por unidade ")
         print("2 - Dados de um determinado curso ")
         print("3 - Dados de todos os cursos ")
@@ -34,10 +34,10 @@ def main():
         print("5 - Disciplinas que são usadas em mais de um curso ")
         print("6 - Busca de cursos por filtros ")
 
-        codigo = input("Digite o código: ") # Lê o código do usuário
+        codigo = input("\nDigite o código: ") # Lê o código do usuário
 
         if codigo == '0':   # Encerra o programa
-            print("PROGRAMA FINALIZADO\nAté a próxima!!")
+            print("\nPROGRAMA FINALIZADO\nAté a próxima!!")
             break
 
         elif codigo == '1': # Consulta 1. Lista de cursos por unidades
