@@ -26,12 +26,12 @@ def iniciar_driver():
 # Função para selecionar uma unidade na lista de opções
 def selecionar_unidade(select_unidade, unidade):
     select_unidade.select_by_value(unidade.get_attribute('value'))
-    time.sleep(0.5)
+    # time.sleep(0.5)
 
 # Função para selecionar um curso na lista de opções
 def selecionar_curso(select_curso, curso):
     select_curso.select_by_value(curso.get_attribute('value'))
-    time.sleep(0.2)
+    # time.sleep(0.2)
 
 # Função para clicar em um elemento bloqueado momentanemente por um overlay de carregamento
 def clicar_quando_nao_interceptado(driver, by, value):
@@ -44,3 +44,66 @@ def clicar_quando_nao_interceptado(driver, by, value):
         except ElementClickInterceptedException as e:
             # Ainda está bloqueado: espera 0.1s e continua a tentar
             time.sleep(0.1)
+
+def clicar_quando_nao_interceptado(driver, by, value):
+    while True:
+        try:
+            elemento = driver.find_element(by, value)
+            elemento.click()
+            break  # deu certo, saiu do loop
+        except ElementClickInterceptedException as e:
+            time.sleep(0.1)
+    
+# Função para verificar se ocorreu o erro de dados não encontrados
+def erro_dados_nao_encontrados(driver):
+    try:
+        # Procura a mensagem de erro e retorna se ela está visível na tela
+        caixa = driver.find_element(By.XPATH, "//div[@id='err']//p[contains(text(), 'Dados não encontrados')]")
+        return caixa.is_displayed()
+    except:
+        # Caso dê algum erro na procura, retorna False
+        return False
+
+
+# Função que verifica o tipo de situação na busca das informações do curso (erro ou 
+# grade horária disponível) e retorna uma string descritiva da situação.
+def condicao_erro_ou_aba(driver):
+    # Verifica se o overlay sumiu
+    try:
+        overlay = driver.find_element(By.CLASS_NAME, "blockUI")
+        if overlay.is_displayed():
+            return False  # Ainda carregando, não tenta clicar
+    except:
+        pass  # Overlay não existe, seguimos
+
+    # Tenta clicar na aba com segurança
+    try:
+        aba = driver.find_element(By.ID, "step4-tab")
+        if aba.is_displayed() and aba.is_enabled():
+            try:
+                aba.click()
+                return "grade"
+            except ElementClickInterceptedException:
+                pass  # Ainda tem algo bloqueando
+    except:
+        pass
+
+    # Verifica se apareceu a caixa de erro
+    try:
+        if erro_dados_nao_encontrados(driver):
+            return "erro"
+    except:
+        pass
+
+    return False  # Continua esperando
+
+def esperar_overlay_sumir(driver, timeout=10):
+    try:
+        WebDriverWait(driver, timeout).until_not(
+            lambda d: any(e.is_displayed() for e in d.find_elements(By.CLASS_NAME, "blockUI"))
+        )
+        time.sleep(0.5)
+        return True
+    except:
+        print("Overlay de carregamento não sumiu a tempo.")
+        return False

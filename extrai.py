@@ -15,51 +15,6 @@ from driver import *
 # Importa classes
 from classes import Curso, Disciplina, Unidade
 
-# ------------------ FUNÇÕES AUXILIARES --------------------
-
-# Função para verificar se ocorreu o erro de dados não encontrados
-def erro_dados_nao_encontrados(driver):
-    try:
-        # Procura a mensagem de erro e retorna se ela está visível na tela
-        caixa = driver.find_element(By.XPATH, "//div[@id='err']//p[contains(text(), 'Dados não encontrados')]")
-        return caixa.is_displayed()
-    except:
-        # Caso dê algum erro na procura, retorna False
-        return False
-
-
-# Função que verifica o tipo de situação na busca das informações do curso (erro ou 
-# grade horária disponível) e retorna uma string descritiva da situação.
-def condicao_erro_ou_aba(driver):
-    # Verifica se o overlay sumiu
-    try:
-        overlay = driver.find_element(By.CLASS_NAME, "blockUI")
-        if overlay.is_displayed():
-            return False  # Ainda carregando, não tenta clicar
-    except:
-        pass  # Overlay não existe, seguimos
-
-    # Tenta clicar na aba com segurança
-    try:
-        aba = driver.find_element(By.ID, "step4-tab")
-        if aba.is_displayed() and aba.is_enabled():
-            try:
-                aba.click()
-                return "grade"
-            except ElementClickInterceptedException:
-                pass  # Ainda tem algo bloqueando
-    except:
-        pass
-
-    # Verifica se apareceu a caixa de erro
-    try:
-        if erro_dados_nao_encontrados(driver):
-            return "erro"
-    except:
-        pass
-
-    return False  # Continua esperando
-
 # --------------------------- FUNÇÕES PRINCIPAIS --------------------------
 
 # Função que extrai todas as disciplinas de um curso, cria os
@@ -124,12 +79,12 @@ def extrair_todos_dados(quantidade_unidades):
 
         # Espera até que o select tenha mais de uma opção (excluindo a primeira "Selecione")
         WebDriverWait(driver, 10).until(
-            lambda d: len(Select(d.find_element(By.ID, "comboUnidade")).options) > 1
+            lambda d: len(Select(d.find_element(By.ID, "comboUnidade")).options) >= 1
         )
         select_unidade = Select(driver.find_element(By.ID, "comboUnidade"))
 
         # Para cada unidade no range especificado pelo usuário
-        for unidade in select_unidade.options[1:(quantidade_unidades+1)]:
+        for unidade in select_unidade.options[1:quantidade_unidades]:
             # Seleciona a unidade
             selecionar_unidade(select_unidade, unidade)
             

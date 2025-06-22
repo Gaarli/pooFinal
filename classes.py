@@ -18,9 +18,8 @@ class Disciplina:
 
     # Função para imprimir as informações da Disciplinas na tela
     def mostrar(self):
-        print(f"  {self.codigo} - {self.nome}, Créditos Aula: {self.creditos_aula}, Créditos Trabalho: {self.creditos_trabalho}")
-        print(f"    CH: {self.carga_horaria}, Estágio: {self.carga_estagio}, Práticas: {self.carga_praticas}, Atividades: {self.carga_atividades}")
-
+        print(f"    • {self.codigo} - {self.nome}")
+        print(f"          Créditos Aula: {self.creditos_aula} | Créditos Trabalho: {self.creditos_trabalho} | CH: {self.carga_horaria} | Estágio: {self.carga_estagio} | Práticas: {self.carga_praticas} | Atividades: {self.carga_atividades}")
 
 # Classe para representar um curso
 class Curso:
@@ -47,34 +46,39 @@ class Curso:
 
     # Função para imprimir as informações do curso na tela
     def mostrar(self):
+        print("\n" + "=" * 80)
+        print(f'Curso: {self.nome}')
+        print("=" * 80)
         print(f"  Duração Ideal: {self.duracao_ideal} | Mínima: {self.duracao_minima} | Máxima: {self.duracao_maxima}")
         print("\n  Disciplinas Obrigatórias:")
-        for disciplina in self.obrigatorias:
-            disciplina.mostrar()
+        for d in self.obrigatorias:
+            d.mostrar()
         print("\n  Disciplinas Optativas Eletivas:")
-        for disciplina in self.optativas_eletivas:
-            disciplina.mostrar()
+        for d in self.optativas_eletivas:
+            d.mostrar()
         print("\n  Disciplinas Optativas Livres:")
-        for disciplina in self.optativas_livres:
-            disciplina.mostrar()
+        for d in self.optativas_livres:
+            d.mostrar()
 
 
 # Classe para representar uma unidade
 class Unidade:
     def __init__(self, nome):
-        # Inicializa os atributos
+        # Definição dos atributos
         self.nome = nome
         self.cursos = []
 
-    # Função para adicionar um curso na unidade
+    # O método a seguir adiciona um curso à unidade
     def adicionar_curso(self, curso):
         self.cursos.append(curso)
 
-    # Função para imprimir as informações da unidade na tela
+    # O método a seguir imprime as informações da unidade, como seus cursos
+    # Quando é chamado 'curso.mostrar()' as disciplinas também
+    # são mostradas
     def mostrar(self):
         print(f"Unidade: {self.nome}")
         print(f"Total de cursos: {len(self.cursos)}")
         for curso in self.cursos:
-            print("\n---------------------------")
             curso.mostrar()
+            print("\n" + "=" * 80)
     

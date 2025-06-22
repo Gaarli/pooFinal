@@ -1,64 +1,69 @@
-### BIBLIOTECAS UTILIZADAS: SELENIUM; BEAUTIFULSOUP4; TIME
-### IMPORTANTE: PRECISA BAIXAR CADA BIBLIOTECA UTILIZANDO pip install nomeBiblioteca no terminal
-### ex.: pip install selenium
+# NOME: Gabriel de Araujo Lima - NUSP: 14571376
+# NOME: 
 
-'''
-'main.py' é o programa principal, responsável pela interação com o usuário e pela chamada das funções
-que executam as operações busca e de impressão.
-'''
+# BIBLIOTECAS UTILIZADAS: SELENIUM; BEAUTIFULSOUP4
+# IMPORTANTE: PRECISA BAIXAR CADA BIBLIOTECA UTILIZANDO pip install nomeBiblioteca no terminal
+# pip install selenium
+# pip install beautifulsoup4
 
-# Importa bibliotecas
-from selenium.common.exceptions import *
-from extrai import *
-from driver import *
-import sys
+# Importa os módulos
+from driver import *    # Módulo responsável pela manipulação da web
+from extrai import *    # Módulo responsável por extrair os dados
+from consulta import *  # Módulo responsável pelas consultas dos dados
+from imprime import *   # Módulo responsável por imprimir os dados
 
-# Importa classes
-from classes import Unidade
-from classes import Disciplina
-from classes import Curso
+import sys  # Biblioteca para leitura direto do terminal, conforme solicitado no pdf
 
-# Função principal responsável pela interação com o usuário
+# Função principal, que lê do usuário a quantidade de unidades, extrai os dados e solicita
+# as consultas
 def main():
+    quantidade_unidades = int(sys.argv[1])  # Lê a quantidade de unidades
 
-    quantidade_unidades = int(sys.argv[1])
-
-    lista_unidades = []
-    # Extrai os dados das unidades
-    lista_unidades = extrair_todos_dados(quantidade_unidades)
-
-    print("*************** EXTRAÇÃO DOS DADOS FINALIZADA ***************\n")
-
+    lista_de_unidades = extrair_todos_dados(quantidade_unidades) # Extrai os dados e guarda em lista_unidades
+    
+    # Entra no loop das consultas
     while True:
-        print("******************************")
-        print(" DIGITE A CONSULTA DESEJADA")
-        print("******************************")
-
+        # Imprime a interface no terminal
         print("0 - FINALIZAR CONSULTAS ")
         print("1 - Lista de cursos por unidade ")
         print("2 - Dados de um determinado curso ")
         print("3 - Dados de todos os cursos ")
         print("4 - Dados de uma disciplina, inclusive quais cursos ela faz parte ")
         print("5 - Disciplinas que são usadas em mais de um curso ")
-        
-        codigo = input()
+        print("6 - Busca de cursos por filtros ")
 
-        if(codigo == '0'):
+        codigo = input("Digite o código: ") # Lê o código do usuário
+
+        if codigo == '0':   # Encerra o programa
             print("PROGRAMA FINALIZADO")
             break
-        elif(codigo == '1'):
-            print('codigo 1')
-        elif(codigo == '2'):
-            print('codigo 2')
-        elif(codigo == '3'): 
-            print('codigo 3')
-        elif(codigo == '4'): 
-            print('codigo 4')
-        elif(codigo == '5'): 
-            print('codigo 5')
-        
-    quit()
 
+        elif codigo == '1': # Consulta 1. Lista de cursos por unidades
+            imprimir_primeira_consulta(listar_cursos_por_unidade(lista_de_unidades)) # Chama e imprime a consulta
+
+        elif codigo == '2': # Consulta 2. Dados de um determinado curso
+            nome = input("Digite o nome do curso: ")
+            imprimir_segunda_consulta(buscar_curso_por_nome(lista_de_unidades, nome))  # Chama e imprime a consulta
+
+        elif codigo == '3': # Consulta 3. Dados de todos os cursos 
+            imprimir_terceira_consulta(listar_dados_de_todos_os_cursos(lista_de_unidades))  # Chama e imprime a consulta
+
+        elif codigo == '4': # Consulta 4. Dados de uma disciplina, inclusive quais cursos ela faz parte
+            termo = input("Digite o nome ou código da disciplina: ")
+            imprimir_quarta_consulta(buscar_disciplina(lista_de_unidades, termo))   # Chama e imprime a consulta
+
+        elif codigo == '5': # Consulta 5. Disciplinas que são usadas em mais de um curso
+            imprimir_quinta_consulta(disciplinas_em_varios_cursos(lista_de_unidades))   # Chama e imprime a consulta
+        
+        elif codigo == '6': # Consulta 6. Filtro customizável de cursos
+            filtros = solicitar_filtros_do_usuario()    # Solicita os filtros do usuário
+            imprimir_sexta_consulta(filtrar_cursos_funcional(lista_de_unidades,**filtros))  # Chama e imprime a consulta
+
+        else:   # Caso seja um código que não esteja de 1 a 6
+            print("Código inválido. Tente novamente.")
+    
+    quit()  # Encerra o programa
+
+# Chama a função main
 if __name__ == "__main__":
-    # Chama a função principal
     main()
