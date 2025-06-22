@@ -30,24 +30,24 @@ class Curso:
         self.optativas_eletivas = []
 
     def adicionar_disciplina(self, disciplina, tipo):
-        if tipo == "obrigatoria":
+        if tipo == "Disciplinas Obrigatórias":
             self.obrigatorias.append(disciplina)
-        elif tipo == "optativa_livre":
+        elif tipo == "Disciplinas Optativas Livres":
             self.optativas_livres.append(disciplina)
-        elif tipo == "optativa_eletiva":
+        elif tipo == "Disciplinas Optativas Eletivas":
             self.optativas_eletivas.append(disciplina)
 
     def mostrar(self):
         print(f"  Duração Ideal: {self.duracao_ideal} | Mínima: {self.duracao_minima} | Máxima: {self.duracao_maxima}")
         print("\n  Disciplinas Obrigatórias:")
-        for d in self.obrigatorias:
-            d.mostrar()
+        for disciplina in self.obrigatorias:
+            disciplina.mostrar()
         print("\n  Disciplinas Optativas Eletivas:")
-        for d in self.optativas_eletivas:
-            d.mostrar()
+        for disciplina in self.optativas_eletivas:
+            disciplina.mostrar()
         print("\n  Disciplinas Optativas Livres:")
-        for d in self.optativas_livres:
-            d.mostrar()
+        for disciplina in self.optativas_livres:
+            disciplina.mostrar()
 
 
 class Unidade:

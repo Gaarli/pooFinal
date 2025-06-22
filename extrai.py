@@ -1,65 +1,23 @@
-# extrai.py
+'''
+extrai.py
+Arquivo com as funções principais e auxiliares relativas à extração de dados do website 
+e à criação e inicialização dos objetos dos tipos Unidade, Curso e Disciplina.
+'''
 
+# Importação de bibliotecas e funções
 from bs4 import BeautifulSoup
-from driver import clicar_quando_nao_interceptado
-from classes import Curso, Disciplina
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import ElementClickInterceptedException, TimeoutException
+from selenium.common.exceptions import ElementClickInterceptedException
 import time
-
-# Importa classes
-from classes import Unidade
-from classes import Disciplina
-from classes import Curso
-
 from driver import *
 
-def extrair_dados_do_curso(driver, nome_curso, nome_unidade):
-    time.sleep(0.5)
+# Importa classes
+from classes import Curso, Disciplina, Unidade
 
-    lista_disciplinas=[]
+# ------------------ FUNÇÕES AUXILIARES --------------------
 
-    soup = BeautifulSoup(driver.page_source, 'html.parser')
-    
-    duracaoIdeal = soup.find('span', class_='duridlhab').text
-    duracaoMinima = soup.find('span', class_='durminhab').text
-    duracaoMaxima = soup.find('span', class_='durmaxhab').text
-
-    curso_instancia = Curso(nome_curso, nome_unidade, duracaoIdeal, duracaoMinima, duracaoMaxima)
-    
-    tabelas = soup.find('div', id="gradeCurricular").find_all('table')
-
-    for tabela in tabelas:
-        tipo_tabela = tabela.find('td').text
-        disciplinas = tabela.find_all('tr',{'style': 'height: 20px;'})
-        if(tipo_tabela=="Disciplinas Obrigatórias"):
-            for disciplina in disciplinas:
-                infos = disciplina.find_all('td')
-                disciplina_instancia = Disciplina(infos[0].text,infos[1].text,infos[2].text,infos[3].text,infos[4].text,infos[5].text,infos[6].text,infos[7].text)
-                lista_disciplinas.append((disciplina_instancia,"obrigatoria"))
-            continue
-        if(tipo_tabela=="Disciplinas Optativas Eletivas"):
-            for disciplina in disciplinas:
-                infos = disciplina.find_all('td')
-                disciplina_instancia = Disciplina(infos[0].text,infos[1].text,infos[2].text,infos[3].text,infos[4].text,infos[5].text,infos[6].text,infos[7].text)
-                lista_disciplinas.append((disciplina_instancia,"optativa_eletiva"))
-            continue
-        if(tipo_tabela=="Disciplinas Optativas Livres"):
-            for disciplina in disciplinas:
-                infos = disciplina.find_all('td')
-                disciplina_instancia = Disciplina(infos[0].text,infos[1].text,infos[2].text,infos[3].text,infos[4].text,infos[5].text,infos[6].text,infos[7].text)
-                lista_disciplinas.append((disciplina_instancia,"optativa_livre"))
-            continue
-    
-    for disciplina,tipo in lista_disciplinas:
-        curso_instancia.adicionar_disciplina(disciplina,tipo)
-
-    lista_disciplinas.clear()
-    return curso_instancia
-
-# Adicionar!!!
 # Função para verificar se ocorreu o erro de dados não encontrados
 def erro_dados_nao_encontrados(driver):
     try:
@@ -68,6 +26,8 @@ def erro_dados_nao_encontrados(driver):
     except:
         return False
 
+# Função que verifica o tipo de situação na busca das informações do curso (erro ou 
+# grade horária disponível) e retorna uma string descritiva da situação.
 def condicao_erro_ou_aba(driver):
     # Verifica se o overlay sumiu
     try:
@@ -83,7 +43,7 @@ def condicao_erro_ou_aba(driver):
         if aba.is_displayed() and aba.is_enabled():
             try:
                 aba.click()
-                return "aba"
+                return "grade"
             except ElementClickInterceptedException:
                 pass  # Ainda tem algo bloqueando
     except:
@@ -98,9 +58,7 @@ def condicao_erro_ou_aba(driver):
 
     return False  # Continua esperando
 
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-
+# Função para "pausar" o prosseguimento do código enquanto houver um overlay de carregamento na tela
 def esperar_overlay_sumir(driver, timeout=10):
     try:
         WebDriverWait(driver, timeout).until_not(
@@ -112,8 +70,62 @@ def esperar_overlay_sumir(driver, timeout=10):
         print("Overlay de carregamento não sumiu a tempo.")
         return False
 
+# --------------------------- FUNÇÕES PRINCIPAIS --------------------------
+
+# Função que extrai todas as disciplinas de um curso, cria os
+# objetos que as representam e retorna uma lista com todos eles.
+def extrair_disciplinas(soup):
+    # Resgata as tabelas que dividem as disciplinas por tipo
+    tabelas = soup.find('div', id="gradeCurricular").find_all('table')
+
+    # Lista para adicionar as disciplinas
+    lista_disciplinas=[]
+
+    for tabela in tabelas:
+        # Tipo da tabela (obrigatória, optativa livre ou optativa eletiva)
+        tipo_tabela = tabela.find('td').text
+
+        # Resgata os elementos html das disciplinas
+        disciplinas = tabela.find_all('tr',{'style': 'height: 20px;'})
+
+        for disciplina in disciplinas:
+            # Extrai as informações separadas da disciplina, cria um objeto e adiciona-o na lista
+            infos = disciplina.find_all('td')
+            disciplina_instancia = Disciplina(infos[0].text,infos[1].text,infos[2].text,infos[3].text,infos[4].text,infos[5].text,infos[6].text,infos[7].text)
+            lista_disciplinas.append((disciplina_instancia, tipo_tabela))
+
+    # Retorna a lista com todas as disciplinas
+    return lista_disciplinas
+
+
+# Função para extrair os dados de um curso e retornar um objeto do tipo Curso que o representa.
+def extrair_dados_do_curso(driver, nome_curso, nome_unidade):
+    time.sleep(0.5)
+
+    soup = BeautifulSoup(driver.page_source, 'html.parser')
+    
+    # Busca as informações de duração do curso
+    duracaoIdeal = soup.find('span', class_='duridlhab').text
+    duracaoMinima = soup.find('span', class_='durminhab').text
+    duracaoMaxima = soup.find('span', class_='durmaxhab').text
+
+    # Inicializa uma instância de Curso
+    curso_instancia = Curso(nome_curso, nome_unidade, duracaoIdeal, duracaoMinima, duracaoMaxima)
+
+    # Busca todas as disciplinas do curso
+    lista_disciplinas = extrair_disciplinas(soup)
+    
+    # Adicionas as disciplinas na instância do curso
+    for disciplina,tipo in lista_disciplinas:
+        curso_instancia.adicionar_disciplina(disciplina,tipo)
+
+    lista_disciplinas.clear() 
+    # Retorna a instância atualizada do curso
+    return curso_instancia
+
 
 def extrair_todos_dados(quantidade_unidades):
+    # Lista para adicionar as unidades
     lista_unidades = []
 
     try:
@@ -156,7 +168,6 @@ def extrair_todos_dados(quantidade_unidades):
 
                 # Verifica se houve erro de informações não disponíveis
                 resultado = WebDriverWait(driver, 10).until(condicao_erro_ou_aba)
-                print(f"\ncondição: {resultado}\n")
                 if resultado == "erro":
 
                     # Adiciona na lista apenas com o nome do curso e da unidade
@@ -183,20 +194,24 @@ def extrair_todos_dados(quantidade_unidades):
                     aba = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, "step4-tab")))
                     aba.click()
 
-                
+                # Cria uma instância do curso e adiciona-o na instância da unidade
                 curso_instancia = extrair_dados_do_curso(driver,nomeCurso,nomeUnidade)
                 unidade_instancia.adicionar_curso(curso_instancia)
                 
-                # print(f"***** DADOS EXTRAIDOS *****")
-                # curso_instancia.mostrar()
+                # DEBUG
+                print(f"***** DADOS EXTRAIDOS *****")
+                curso_instancia.mostrar()
 
+                # Voltar para o menu de escolhas
                 clicar_quando_nao_interceptado(driver, By.ID, "step1-tab")
 
 
+            # Adiciona a unidade atualizada na lista de unidades
             lista_unidades.append(unidade_instancia)
 
     except Exception as e:
         print("Erro durante execução:", type(e).__name__, e)
         driver.quit()
 
+    # Retorna a lista com todas as unidades (especificadas)
     return lista_unidades
