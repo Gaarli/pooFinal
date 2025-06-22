@@ -15,6 +15,11 @@ from driver import *
 # Importa classes
 from classes import Curso, Disciplina, Unidade
 
+# Foram implementadas 3 funções principais:
+# extrair_disciplinas: realiza a extração das disciplinas de 1 curso
+# extrair_dados_do_curso: realiza a extração dos dados de 1 curso
+# extrair_todos_dados: realiza a extração de todos os dados
+
 # --------------------------- FUNÇÕES PRINCIPAIS --------------------------
 
 # Função que extrai todas as disciplinas de um curso, cria os
@@ -133,7 +138,7 @@ def extrair_todos_dados(quantidade_unidades):
                 unidade_instancia.adicionar_curso(curso_instancia)
                 
                 # DEBUG
-                # print(f"*** DADOS EXTRAIDOS ***\n")
+                print(f"*** DADOS EXTRAIDOS ***\n")
                 # curso_instancia.mostrar()
 
                 # Voltar para o menu de escolha do curso
@@ -147,5 +152,6 @@ def extrair_todos_dados(quantidade_unidades):
         print("Erro durante execução:", type(e).__name__, e)
         driver.quit()
 
+    driver.quit()
     # Retorna a lista com todas as unidades, de acordo com a quantidade especificada
     return lista_unidades

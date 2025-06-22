@@ -105,7 +105,7 @@ def buscar_disciplina(lista_unidades, termo_busca):
             # Itera sobre a lista unificada de disciplinas para realizar a busca.
             for disciplina, tipo in todas:
                 # Verifica se o termo de busca está no nome ou no código da disciplina.
-                if termo_busca in remover_acentos(disciplina.nome.lower()) or termo_busca in disciplina.codigo.lower():
+                if termo_busca == remover_acentos(disciplina.nome.lower()) or termo_busca in disciplina.codigo.lower():
                     # Se encontrar, adiciona uma tupla com os dados da ocorrência aos resultados.
                     resultados.append((disciplina, curso.nome, unidade.nome, tipo))
 

@@ -16,7 +16,9 @@ import sys  # Biblioteca para leitura direto do terminal, conforme solicitado no
 
 # Função principal, que lê do usuário a quantidade de unidades, extrai os dados e solicita as consultas
 def main():
-    quantidade_unidades = int(sys.argv[1])  # Lê a quantidade de unidades
+    quantidade_unidades = int(sys.argv[1])  # Lê a quantidade de unidades diretamente do terminal
+    # Foi utilizado leitura com sys para poder escrever 'python3 main.py 3' diretamente
+    # Ou seja, o '3', por exemplo, pode ser escrito na frente de main.py
 
     lista_de_unidades = extrair_todos_dados(quantidade_unidades) # Extrai os dados e guarda em lista_unidades
     print("---------- Extração finalizada ----------")
@@ -35,7 +37,7 @@ def main():
         codigo = input("Digite o código: ") # Lê o código do usuário
 
         if codigo == '0':   # Encerra o programa
-            print("PROGRAMA FINALIZADO")
+            print("PROGRAMA FINALIZADO\nAté a próxima!!")
             break
 
         elif codigo == '1': # Consulta 1. Lista de cursos por unidades
@@ -49,7 +51,7 @@ def main():
             imprimir_terceira_consulta(listar_dados_de_todos_os_cursos(lista_de_unidades))  # Chama e imprime a consulta
 
         elif codigo == '4': # Consulta 4. Dados de uma disciplina, inclusive quais cursos ela faz parte
-            termo = input("Digite o nome ou código da disciplina: ")
+            termo = input("Digite o nome (completo) ou código da disciplina: ")
             imprimir_quarta_consulta(buscar_disciplina(lista_de_unidades, termo))   # Chama e imprime a consulta
 
         elif codigo == '5': # Consulta 5. Disciplinas que são usadas em mais de um curso
