@@ -14,12 +14,12 @@ from imprime import *   # Módulo responsável por imprimir os dados
 
 import sys  # Biblioteca para leitura direto do terminal, conforme solicitado no pdf
 
-# Função principal, que lê do usuário a quantidade de unidades, extrai os dados e solicita as consultas
+# Função principal, que lê do usuário a quantidade de unidades, extrai os dados e solicita
+# as consultas
 def main():
     quantidade_unidades = int(sys.argv[1])  # Lê a quantidade de unidades
 
     lista_de_unidades = extrair_todos_dados(quantidade_unidades) # Extrai os dados e guarda em lista_unidades
-    print("---------- Extração finalizada ----------")
     
     # Entra no loop das consultas
     while True:

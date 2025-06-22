@@ -39,6 +39,17 @@ def clicar_quando_nao_interceptado(driver, by, value):
         try:
             elemento = driver.find_element(by, value)
             elemento.click()
+            # deu certo, sai do loop
+            break  
+        except ElementClickInterceptedException as e:
+            # Ainda está bloqueado: espera 0.1s e continua a tentar
+            time.sleep(0.1)
+
+def clicar_quando_nao_interceptado(driver, by, value):
+    while True:
+        try:
+            elemento = driver.find_element(by, value)
+            elemento.click()
             break  # deu certo, saiu do loop
         except ElementClickInterceptedException as e:
             time.sleep(0.1)
@@ -85,3 +96,14 @@ def condicao_erro_ou_aba(driver):
         pass
 
     return False  # Continua esperando
+
+def esperar_overlay_sumir(driver, timeout=10):
+    try:
+        WebDriverWait(driver, timeout).until_not(
+            lambda d: any(e.is_displayed() for e in d.find_elements(By.CLASS_NAME, "blockUI"))
+        )
+        time.sleep(0.5)
+        return True
+    except:
+        print("Overlay de carregamento não sumiu a tempo.")
+        return False

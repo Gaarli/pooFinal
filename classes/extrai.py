@@ -81,11 +81,10 @@ def extrair_todos_dados(quantidade_unidades):
         WebDriverWait(driver, 10).until(
             lambda d: len(Select(d.find_element(By.ID, "comboUnidade")).options) > 1
         )
-
         select_unidade = Select(driver.find_element(By.ID, "comboUnidade"))
 
         # Para cada unidade no range especificado pelo usuário
-        for unidade in select_unidade.options[1:(quantidade_unidades+1)]: 
+        for unidade in select_unidade.options[1:]:
             # Seleciona a unidade
             selecionar_unidade(select_unidade, unidade)
             
@@ -93,7 +92,7 @@ def extrair_todos_dados(quantidade_unidades):
             nomeUnidade = unidade.get_attribute('text')
             unidade_instancia = Unidade(nomeUnidade)
             
-            # print(f"\n***** UNIDADE SELECIONADA: {nomeUnidade} *****")
+            print(f"\nUNIDADE SELECIONADA: {nomeUnidade}")
             
             # Espera as opções de curso ser clicável
             WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "comboCurso")))
@@ -107,7 +106,7 @@ def extrair_todos_dados(quantidade_unidades):
                 selecionar_curso(select_curso, curso)
                 nomeCurso = curso.get_attribute('text')
                 
-                # print(f"\n***** CURSO SELECIONADO: {nomeCurso} *****")
+                print(f"\nCURSO SELECIONADO: {nomeCurso}")
 
                 # Tenta buscar as informações do curso, clicando no botão "Buscar"
                 clicar_quando_nao_interceptado(driver, By.ID, "enviar")
@@ -134,7 +133,7 @@ def extrair_todos_dados(quantidade_unidades):
                 unidade_instancia.adicionar_curso(curso_instancia)
                 
                 # DEBUG
-                # print(f"***** DADOS EXTRAIDOS *****")
+                print(f"*** DADOS EXTRAIDOS ***\n")
                 # curso_instancia.mostrar()
 
                 # Voltar para o menu de escolha do curso
