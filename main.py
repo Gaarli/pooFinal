@@ -37,7 +37,7 @@ def main():
         codigo = input("\nDigite o código: ") # Lê o código do usuário
 
         if codigo == '0':   # Encerra o programa
-            print("\nPROGRAMA FINALIZADO\nAté a próxima!!")
+            print("\nPROGRAMA FINALIZADO\n")
             break
 
         elif codigo == '1': # Consulta 1. Lista de cursos por unidades

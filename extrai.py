@@ -144,16 +144,16 @@ def extrair_todos_dados(quantidade_unidades):
                 # Cria uma instância do curso e adiciona-o na instância da unidade
                 curso_instancia = extrair_dados_do_curso(driver,nomeCurso,nomeUnidade)
                 unidade_instancia.adicionar_curso(curso_instancia)
-                
-                # DEBUG
-                # print(f"*** DADOS EXTRAIDOS ***\n")
-                # curso_instancia.mostrar()
 
                 # Voltar para o menu de escolha do curso
                 clicar_quando_nao_interceptado(driver, By.ID, "step1-tab")
 
                 # Imprime o curso que foi extraído na saída padrão
-                sigla = re.search(r"\(\s*([A-Z]+)\s*\)", nomeUnidade).group(1)
+                match = re.search(r"\(\s*([A-Z]+)\s*\)", nomeUnidade)
+                if match:
+                    sigla = match.group(1)
+                else:
+                    sigla = nomeUnidade
                 print(f"Dados do curso \"{nomeCurso}\" ({sigla}) extraídos")
 
             # Adiciona a unidade atualizada na lista de unidades
